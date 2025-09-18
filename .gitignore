@@ -1,5 +1,20 @@
-# ignore big data and temporary files
-data/raw/
-models/
-*.pyc
+# Python
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints
+
+# Data
+data/APPLE_DISEASE_DATASET/
+data/raw/
+
+# Models
+models/
+
+# MacOS
+.DS_Store
