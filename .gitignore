@@ -1,0 +1,5 @@
+# ignore big data and temporary files
+data/raw/
+models/
+*.pyc
+__pycache__/
