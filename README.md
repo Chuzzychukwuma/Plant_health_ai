@@ -22,3 +22,18 @@ source venv/bin/activate
 
 # Install packages
 pip install -r requirements.txt
+
+Add classical CV baseline using HSV + LBP for disease detection
+
+
+## Classical Computer Vision (CCV) Baseline
+ 
+Add classical CV baseline using HSV + LBP for disease detection.
+
+### Details
+- Implemented **HSV color thresholding** to detect leaf discoloration and disease regions.  
+- Applied **Local Binary Pattern (LBP)** texture analysis to capture surface texture variations.  
+- Established a **non-AI baseline** for comparison with the upcoming CNN deep learning model.  
+- Prepared **scripts and visual outputs** for testing and demonstration on dataset samples.
+
+This baseline helps validate that disease detection can be performed with traditional computer vision methods before moving to deep learning models.
