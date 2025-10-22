@@ -37,3 +37,6 @@ Add classical CV baseline using HSV + LBP for disease detection.
 - Prepared **scripts and visual outputs** for testing and demonstration on dataset samples.
 
 This baseline helps validate that disease detection can be performed with traditional computer vision methods before moving to deep learning models.
+This code runs the script: python3 classical_cv/hsv_lbp_detect.py
+
+
