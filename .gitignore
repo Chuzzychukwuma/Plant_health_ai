@@ -1,20 +1,56 @@
+# -------------------------------
 # Python
+# -------------------------------
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
 *.pyd
+*.so
+*.egg-info/
+.venv/
 venv/
 .env
 
+# -------------------------------
 # Jupyter
-.ipynb_checkpoints
+# -------------------------------
+.ipynb_checkpoints/
 
-# Data
-data/APPLE_DISEASE_DATASET/
+# -------------------------------
+# Project data
+# -------------------------------
+data/
 data/raw/
+data/APPLE_DISEASE_DATASET/
 
-# Models
+# -------------------------------
+# Model files
+# -------------------------------
 models/
+*.pth
+*.h5
 
-# MacOS
+# -------------------------------
+# Large / temporary binaries
+# -------------------------------
+*.zip
+*.tar
+*.tar.gz
+*.jpg
+*.jpeg
+*.png
+
+# -------------------------------
+# Logs and temp outputs
+# -------------------------------
+*.log
+*.tmp
+*.bak
+*.swp
+
+# -------------------------------
+# IDE / OS-specific
+# -------------------------------
 .DS_Store
+.vscode/
+.idea/
