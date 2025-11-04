@@ -29,7 +29,6 @@ Add classical CV baseline using HSV + LBP for disease detection
 ## Classical Computer Vision (CCV) Baseline
  
 Add classical CV baseline using HSV + LBP for disease detection.
-
 ### Details
 - Implemented **HSV color thresholding** to detect leaf discoloration and disease regions.  
 - Applied **Local Binary Pattern (LBP)** texture analysis to capture surface texture variations.  
