@@ -5,27 +5,31 @@ import requests
 import streamlit as st
 from PIL import Image
 
-API_URL = os.getenv("PLANT_API_URL", "http://127.0.0.1:8000/predict")
+# ---- Settings ----
+DEFAULT_API = "http://127.0.0.1:8000/predict"
+API_URL = os.getenv("PLANT_API_URL", DEFAULT_API)
+
 st.set_page_config(page_title="🌿 Plant Health AI",
                    page_icon="🌿", layout="centered")
-
 st.title("🌿 Plant Health AI — Leaf Disease Classifier")
-st.caption("Upload an apple leaf image to get the predicted class and confidence.")
+st.caption("Upload an apple leaf image to get the predicted class and confidence (served by your FastAPI model).")
 
 with st.sidebar:
     st.subheader("Settings")
     api_url = st.text_input("API endpoint", API_URL)
-    st.caption("Tip: change this if you deploy the FastAPI elsewhere.")
+    st.caption(
+        "Tip: if you deploy the API elsewhere, paste its URL here (e.g. Render/EC2).")
     st.divider()
-    st.caption("Powered by ResNet-18 (PyTorch) via FastAPI")
+    st.caption("Model: ResNet-18 (PyTorch)")
 
 uploaded = st.file_uploader("Upload a leaf image", type=["jpg", "jpeg", "png"])
+
 if uploaded:
     # Preview
     img = Image.open(uploaded).convert("RGB")
     st.image(img, caption="Uploaded image", use_container_width=True)
 
-    # Serialize to bytes for multipart/form-data
+    # Serialize image as JPEG bytes for multipart/form-data
     buf = io.BytesIO()
     img.save(buf, format="JPEG", quality=95)
     buf.seek(0)
@@ -49,7 +53,6 @@ if uploaded:
         st.success(
             f"Prediction: **{pred}**  \nConfidence: **{conf:.1f}%**  \nLatency: {(time.time()-t0)*1000:.0f} ms")
 
-        # Probabilities as bars
         if probs:
             st.subheader("Class probabilities")
             for cls, p in sorted(probs.items(), key=lambda x: x[1], reverse=True):
