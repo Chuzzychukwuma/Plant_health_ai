@@ -1,0 +1,10 @@
+                  precision    recall  f1-score   support
+
+APPLE ROT LEAVES     0.7368    0.6667    0.7000        21
+  HEALTHY LEAVES     0.5833    0.7778    0.6667         9
+     LEAF BLOTCH     0.7727    0.7727    0.7727        22
+     SCAB LEAVES     0.7419    0.7188    0.7302        32
+
+        accuracy                         0.7262        84
+       macro avg     0.7087    0.7340    0.7174        84
+    weighted avg     0.7317    0.7262    0.7270        84
