@@ -2,7 +2,12 @@
 import os
 import time
 import random
+from pathlib import Path
+
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -31,12 +36,16 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 IMG_SIZE = 224
 BATCH_SIZE = 16
 HEAD_EPOCHS = 8          # train the new FC head with backbone frozen
-FT_EPOCHS = 10          # fine-tune last block briefly
+FT_EPOCHS = 10           # fine-tune last block briefly
 LR_HEAD = 1e-4
 LR_FT = 5e-5
 WEIGHT_DECAY = 1e-4
 MODEL_DIR = "models"
 os.makedirs(MODEL_DIR, exist_ok=True)
+
+# where we’ll save metrics & figures
+Path("reports/metrics").mkdir(parents=True, exist_ok=True)
+Path("reports/figures").mkdir(parents=True, exist_ok=True)
 
 # ------------------------------
 # Data
@@ -71,6 +80,12 @@ scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=HEAD_EPOCHS)
 
 best_val = 0.0
 best_path = os.path.join(MODEL_DIR, "pt_resnet18_best.pth")
+final_path = os.path.join(MODEL_DIR, "pt_resnet18_final.pth")
+
+# ------------------------------
+# History (for CSV + plots)
+# ------------------------------
+hist = []  # rows: {"phase","epoch","tr_loss","tr_acc","val_loss","val_acc"}
 
 
 def train_one_epoch(m, loader, crit, opt):
@@ -115,6 +130,17 @@ for epoch in range(1, HEAD_EPOCHS + 1):
     dt = time.time() - t0
     print(f"[Head] Epoch {epoch}/{HEAD_EPOCHS} | tr_loss {tr_loss:.4f} acc {tr_acc:.4f} "
           f"| val_loss {va_loss:.4f} acc {va_acc:.4f} | {dt:.1f}s")
+
+    # log metrics
+    hist.append({
+        "phase": "Head",
+        "epoch": epoch,
+        "tr_loss": tr_loss,
+        "tr_acc": tr_acc,
+        "val_loss": va_loss,
+        "val_acc": va_acc,
+    })
+
     if va_acc > best_val:
         best_val = va_acc
         torch.save(model.state_dict(), best_path)
@@ -144,13 +170,61 @@ for epoch in range(1, FT_EPOCHS + 1):
     dt = time.time() - t0
     print(f"[FT]   Epoch {epoch}/{FT_EPOCHS}   | tr_loss {tr_loss:.4f} acc {tr_acc:.4f} "
           f"| val_loss {va_loss:.4f} acc {va_acc:.4f} | {dt:.1f}s")
+
+    # log metrics
+    hist.append({
+        "phase": "FT",
+        "epoch": epoch,
+        "tr_loss": tr_loss,
+        "tr_acc": tr_acc,
+        "val_loss": va_loss,
+        "val_acc": va_acc,
+    })
+
     if va_acc > best_val:
         best_val = va_acc
         torch.save(model.state_dict(), best_path)
         print(f"  ✅ Saved best (val_acc={best_val:.4f})")
 
 # save final
-final_path = os.path.join(MODEL_DIR, "pt_resnet18_final.pth")
 torch.save(model.state_dict(), final_path)
 print(f"Done. Best val acc: {best_val:.4f}")
 print(f"Saved: {best_path} and {final_path}")
+
+# ------------------------------
+# Save history CSV + plots
+# ------------------------------
+df = pd.DataFrame(hist)
+df.to_csv("reports/metrics/train_history.csv", index=False)
+
+# Accuracy plot
+plt.figure()
+for phase in ["Head", "FT"]:
+    sub = df[df["phase"] == phase]
+    if not sub.empty:
+        plt.plot(sub["epoch"], sub["val_acc"], label=f"{phase} val_acc")
+        plt.plot(sub["epoch"], sub["tr_acc"],
+                 linestyle="--", label=f"{phase} tr_acc")
+plt.xlabel("Epoch")
+plt.ylabel("Accuracy")
+plt.title("Accuracy vs Epoch (Head & FT)")
+plt.legend()
+plt.tight_layout()
+plt.savefig("reports/figures/accuracy_vs_epoch.png", dpi=150)
+plt.close()
+
+# Loss plot
+plt.figure()
+for phase in ["Head", "FT"]:
+    sub = df[df["phase"] == phase]
+    if not sub.empty:
+        plt.plot(sub["epoch"], sub["val_loss"], label=f"{phase} val_loss")
+        plt.plot(sub["epoch"], sub["tr_loss"],
+                 linestyle="--", label=f"{phase} tr_loss")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.title("Loss vs Epoch (Head & FT)")
+plt.legend()
+plt.tight_layout()
+plt.savefig("reports/figures/loss_vs_epoch.png", dpi=150)
+plt.close()
