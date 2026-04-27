@@ -13,7 +13,7 @@ predictions. Includes latency benchmarking and full model evaluation
 with confusion matrix and per-class F1 reporting.
 
 ## Architecture
-User → Streamlit Dashboard → FastAPI Backend → ResNet-18 Model → Prediction
+```User → Streamlit Dashboard → FastAPI Backend → ResNet-18 Model → Prediction```
 ## Project Structure
 src/
 - train_pt.py          # Model training with PyTorch
