@@ -67,11 +67,22 @@ streamlit run src/infer_pt.py
 python src/benchmark_latency.py
 ```
 
+## Key Results
+
+| Metric | Result |
+|---|---|
+| Validation Accuracy | 72.6% |
+| API Latency (mean) | ~42–53ms depending on input type |
+| p95 Latency | under 58ms |
+
 ## Key Features
 
-- Fine-tuned ResNet-18 with data augmentation and class balancing 
-for robust disease classification
-- FastAPI backend with optimised CPU inference and latency tracking
+- Fine-tuned ResNet-18 with HSV filtering, data augmentation, and 
+class balancing for robust disease classification
+- Validation accuracy of 72.6% on the Kashmiri Apple Disease Dataset
+- FastAPI backend with optimised CPU inference — mean latency of 
+~42ms on real validation images, ~53ms on random inputs
+- p95 latency under 58ms, suitable for real-time prediction use cases
 - Full evaluation pipeline — confusion matrix, per-class F1 scores, 
 saved reports
 - Latency benchmarking comparing process_ms vs total_ms response times
